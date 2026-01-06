@@ -1,0 +1,137 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toss Style Study Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Toss 느낌을 위한 Pretendard 폰트 (CDN) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더: 스트릭 및 코인 -->
+        <header>
+            <div class="header-left">
+                <button id="menu-btn" class="icon-btn">☰</button>
+                <div class="header-title">오늘의 공부</div>
+            </div>
+            <div class="header-right">
+                <div class="coin-badge">
+                    <span>💰</span> <span id="coin-count">0</span>
+                </div>
+                <div class="streak-badge">
+                    <span>🔥</span> <span id="streak-count">0일</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 리스트 -->
+        <main id="task-list" class="task-list">
+            <!-- 자바스크립트로 리스트가 여기에 렌더링됩니다 -->
+            <div class="empty-state">
+                <p>아직 등록된 공부가 없어요.<br>아래 버튼을 눌러 시작해보세요.</p>
+            </div>
+        </main>
+
+        <!-- 하단 플로팅 버튼 (FAB) -->
+        <button id="add-subject-btn" class="fab-btn">+</button>
+    </div>
+
+    <!-- 1. 과목 추가 모달 -->
+    <div id="modal-add" class="modal hidden">
+        <div class="modal-content bottom-sheet">
+            <div class="modal-header">
+                <h2>어떤 공부를 할까요?</h2>
+            </div>
+            <div class="modal-body">
+                <label class="input-label">과목 이름</label>
+                <div class="chip-container" id="subject-chips">
+                    <button class="chip selected" data-val="국어">국어</button>
+                    <button class="chip" data-val="영어">영어</button>
+                    <button class="chip" data-val="수학">수학</button>
+                    <button class="chip" data-val="과학">과학</button>
+                    <button class="chip" data-val="기타">기타</button>
+                </div>
+                
+                <label class="input-label">문제집 이름</label>
+                <input type="text" id="input-workbook" placeholder="예: 수능특강, 쎈" class="toss-input">
+
+                <label class="input-label">오늘의 목표 분량</label>
+                <div class="input-group-row">
+                    <input type="text" inputmode="numeric" id="input-goal" placeholder="숫자 입력" class="toss-input">
+                    <select id="input-unit" class="toss-select">
+                        <option value="문제">문제</option>
+                        <option value="장">장</option>
+                        <option value="단원">단원</option>
+                        <option value="강">강</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-subject" class="btn-primary">추가하기</button>
+                <button class="btn-text close-modal">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 진도 체크 모달 -->
+    <div id="modal-progress" class="modal hidden">
+        <div class="modal-content center-popup">
+            <h2 id="progress-subject"></h2>
+            <p id="progress-workbook" class="sub-text"></p>
+            
+            <div class="progress-input-wrapper">
+                <input type="number" id="current-progress" class="big-input" placeholder="0">
+                <span class="divider">/</span>
+                <span id="goal-display" class="goal-text"></span>
+                <span id="unit-display" class="unit-text"></span>
+            </div>
+
+            <button id="btn-save-progress" class="btn-primary full-width">저장하기</button>
+            <button class="btn-text close-modal">취소</button>
+        </div>
+    </div>
+
+    <!-- 3. 일일 리포트 모달 -->
+    <div id="modal-daily-report" class="modal hidden">
+        <div class="modal-content center-popup">
+            <div class="icon-area" id="daily-icon"></div>
+            <h2 id="daily-title"></h2>
+            <p id="daily-message" class="message-text"></p>
+            <div class="reward-box">
+                <span>획득 코인</span>
+                <span id="daily-coin" class="coin-text"></span>
+            </div>
+            <button id="btn-close-daily" class="btn-primary full-width">오늘도 화이팅!</button>
+        </div>
+    </div>
+
+    <!-- 4. 주간 리포트 모달 -->
+    <div id="modal-weekly-report" class="modal hidden">
+        <div class="modal-content center-popup">
+            <h2>지난주 리포트 📄</h2>
+            <div class="weekly-stat">
+                <div id="weekly-badge" class="badge-large"></div>
+                <p id="weekly-desc"></p>
+            </div>
+            <button id="btn-close-weekly" class="btn-primary full-width">확인</button>
+        </div>
+    </div>
+
+    <!-- 5. 사이드 메뉴 -->
+    <div id="side-menu" class="side-menu hidden">
+        <div class="menu-backdrop" id="menu-backdrop"></div>
+        <div class="menu-content">
+            <h2 style="margin-bottom: 20px;">메뉴</h2>
+            <button id="menu-store" class="menu-item">🏠 상점</button>
+            <button id="menu-manage" class="menu-item">📝 공부 관리</button>
+            <button id="menu-sound" class="menu-item">🔊 효과음 켜짐</button>
+            <button id="menu-reset" class="menu-item" style="color: var(--red);">🗑 데이터 초기화</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
