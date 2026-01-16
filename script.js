@@ -65,6 +65,7 @@ function init() {
     renderHeader();
     renderTasks();
     setupEventListeners();
+    updateTodayTotalTime();
     
     // 타이머 상태 복구 로직
     if (data.timerRunningState) {
@@ -582,6 +583,7 @@ function setupUIStructure() {
         <div id="theme-renderer"></div>
         <div class="timer-display" id="timer-display">00:00:00</div>
         <div id="timer-msg" style="color:#8b95a1; margin-bottom:20px;">집중할 준비가 되었나요?</div>
+        <div id="today-total-time" style="font-size:18px; font-weight:600; color:#3182f6; margin-bottom:30px;">오늘 순공: 0분</div>
         
         <div class="timer-controls" id="timer-start-area">
             <button class="btn-main" id="btn-start-timer">집중 시작</button>
@@ -686,6 +688,7 @@ function startTimer() {
     timerInterval = setInterval(() => {
         currentSessionTime++;
         updateTimerDisplay();
+        updateTodayTotalTime();
         
         // 10분(600초)마다 코인 획득 알림
         if (currentSessionTime > 0 && currentSessionTime % 600 === 0) {
@@ -787,6 +790,7 @@ function stopTimer() {
         saveData();
         
         updateTimerDisplay();
+        updateTodayTotalTime();
         document.getElementById('timer-pause-area').classList.add('hidden');
         document.getElementById('timer-start-area').classList.remove('hidden');
         document.getElementById('timer-msg').innerText = "집중할 준비가 되었나요?";
@@ -869,6 +873,20 @@ function renderStats() {
             <div class="bar-label">${d.getMonth()+1}/${d.getDate()}</div>
         `;
         chartBox.appendChild(barGroup);
+    }
+    updateTodayTotalTime();
+}
+function updateTodayTotalTime() {
+    const todayStr = TODAY;
+    const todayRecord = data.timerHistory.find(h => h.date === todayStr);
+    const totalSeconds = todayRecord ? todayRecord.totalTime : 0;
+    
+    // 현재 진행 중인 세션 시간도 포함
+    const displaySeconds = totalSeconds + (isTimerRunning ? currentSessionTime : 0);
+    
+    const el = document.getElementById('today-total-time');
+    if (el) {
+        el.innerText = `오늘 순공: ${formatTimeSimple(displaySeconds)}`;
     }
 }
 
