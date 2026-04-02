@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toss Style Study Planner</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Toss 느낌을 위한 Pretendard 폰트 (CDN) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
 </head>
 <body>
@@ -27,9 +26,19 @@
             </div>
         </header>
 
+        <!-- 전체 달성률 바 -->
+        <div class="overall-progress-wrap" id="overall-progress-wrap">
+            <div class="overall-progress-info">
+                <span id="overall-progress-label">전체 달성률</span>
+                <span id="overall-progress-pct">0%</span>
+            </div>
+            <div class="overall-progress-bar-bg">
+                <div class="overall-progress-bar-fill" id="overall-progress-bar"></div>
+            </div>
+        </div>
+
         <!-- 메인 리스트 -->
         <main id="task-list" class="task-list">
-            <!-- 자바스크립트로 리스트가 여기에 렌더링됩니다 -->
             <div class="empty-state">
                 <p>아직 등록된 공부가 없어요.<br>아래 버튼을 눌러 시작해보세요.</p>
             </div>
@@ -53,6 +62,11 @@
                     <button class="chip" data-val="수학">수학</button>
                     <button class="chip" data-val="과학">과학</button>
                     <button class="chip" data-val="기타">기타</button>
+                    <button class="chip chip-add" id="btn-add-custom-subject">＋ 추가</button>
+                </div>
+                <div id="custom-subject-input-wrap" class="custom-subject-wrap hidden">
+                    <input type="text" id="input-custom-subject" class="toss-input" placeholder="과목 이름 입력" maxlength="10">
+                    <button id="btn-confirm-custom-subject" class="btn-chip-confirm">확인</button>
                 </div>
                 
                 <label class="input-label">문제집 이름</label>
@@ -71,6 +85,48 @@
             </div>
             <div class="modal-footer">
                 <button id="btn-save-subject" class="btn-primary">추가하기</button>
+                <button class="btn-text close-modal">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1-2. 과목 수정 모달 -->
+    <div id="modal-edit" class="modal hidden">
+        <div class="modal-content bottom-sheet">
+            <div class="modal-header">
+                <h2>과목 수정</h2>
+            </div>
+            <div class="modal-body">
+                <label class="input-label">과목 이름</label>
+                <div class="chip-container" id="edit-subject-chips">
+                    <button class="chip selected" data-val="국어">국어</button>
+                    <button class="chip" data-val="영어">영어</button>
+                    <button class="chip" data-val="수학">수학</button>
+                    <button class="chip" data-val="과학">과학</button>
+                    <button class="chip" data-val="기타">기타</button>
+                    <button class="chip chip-add" id="btn-add-custom-subject-edit">＋ 추가</button>
+                </div>
+                <div id="custom-subject-input-wrap-edit" class="custom-subject-wrap hidden">
+                    <input type="text" id="input-custom-subject-edit" class="toss-input" placeholder="과목 이름 입력" maxlength="10">
+                    <button id="btn-confirm-custom-subject-edit" class="btn-chip-confirm">확인</button>
+                </div>
+                
+                <label class="input-label">문제집 이름</label>
+                <input type="text" id="edit-workbook" placeholder="예: 수능특강, 쎈" class="toss-input">
+
+                <label class="input-label">목표 분량</label>
+                <div class="input-group-row">
+                    <input type="text" inputmode="numeric" id="edit-goal" placeholder="숫자 입력" class="toss-input">
+                    <select id="edit-unit" class="toss-select">
+                        <option value="문제">문제</option>
+                        <option value="장">장</option>
+                        <option value="단원">단원</option>
+                        <option value="강">강</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-edit" class="btn-primary">저장하기</button>
                 <button class="btn-text close-modal">닫기</button>
             </div>
         </div>
@@ -104,6 +160,10 @@
                 <span>획득 코인</span>
                 <span id="daily-coin" class="coin-text"></span>
             </div>
+            <div class="reward-box" id="daily-bonus-box" style="display:none; margin-top:8px;">
+                <span>🎯 todo 달성 보너스</span>
+                <span id="daily-bonus-coin" class="coin-text"></span>
+            </div>
             <button id="btn-close-daily" class="btn-primary full-width">오늘도 화이팅!</button>
         </div>
     </div>
@@ -120,6 +180,50 @@
         </div>
     </div>
 
+    <!-- 5. 커스텀 확인 모달 (alert/confirm 대체) -->
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-content center-popup">
+            <div class="icon-area" id="confirm-icon">❓</div>
+            <h2 id="confirm-title"></h2>
+            <p id="confirm-message" class="message-text"></p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button id="btn-confirm-cancel" class="btn-secondary flex-1">취소</button>
+                <button id="btn-confirm-ok" class="btn-primary flex-1" style="margin-top:0;">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 알림 모달 (alert 대체) -->
+    <div id="modal-alert" class="modal hidden">
+        <div class="modal-content center-popup">
+            <div class="icon-area" id="alert-icon">✅</div>
+            <h2 id="alert-title"></h2>
+            <p id="alert-message" class="message-text"></p>
+            <button id="btn-alert-ok" class="btn-primary full-width">확인</button>
+        </div>
+    </div>
+
+    <!-- 7. 히스토리 달력 모달 -->
+    <div id="modal-calendar" class="modal hidden">
+        <div class="modal-content center-popup calendar-popup">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <button id="cal-prev" class="cal-nav-btn">‹</button>
+                <h2 id="cal-title" style="font-size:18px;"></h2>
+                <button id="cal-next" class="cal-nav-btn">›</button>
+            </div>
+            <div class="cal-weekdays">
+                <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+            </div>
+            <div id="cal-grid" class="cal-grid"></div>
+            <div class="cal-legend">
+                <div class="cal-legend-item"><div class="cal-dot dot-100"></div><span>100%</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-partial"></div><span>부분 달성</span></div>
+                <div class="cal-legend-item"><div class="cal-dot dot-zero"></div><span>미달성</span></div>
+            </div>
+            <button class="btn-text close-modal" style="margin-top:8px;">닫기</button>
+        </div>
+    </div>
+
     <!-- 5. 사이드 메뉴 -->
     <div id="side-menu" class="side-menu hidden">
         <div class="menu-backdrop" id="menu-backdrop"></div>
@@ -127,6 +231,7 @@
             <h2 style="margin-bottom: 20px;">메뉴</h2>
             <button id="menu-store" class="menu-item">🏠 상점</button>
             <button id="menu-manage" class="menu-item">📝 공부 관리</button>
+            <button id="menu-calendar" class="menu-item">📅 학습 달력</button>
             <button id="menu-sound" class="menu-item">🔊 효과음 켜짐</button>
             <button id="menu-reset" class="menu-item" style="color: var(--red);">🗑 데이터 초기화</button>
         </div>
