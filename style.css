@@ -8,8 +8,8 @@
     --text-black: #191f28;
     --text-grey: #8b95a1;
     --red: #e54e5e;
-    --green: #2ac1bc; /* Toss Greenish Teal */
-    --orange: #ff8e3d; /* Partial success */
+    --green: #2ac1bc;
+    --orange: #ff8e3d;
 }
 
 * {
@@ -29,15 +29,15 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 480px; /* 모바일 뷰 제한 */
+    max-width: 480px;
     background-color: var(--toss-grey-bg);
     position: relative;
     padding-bottom: 80px;
 }
 
-/* Header */
+/* ── Header ── */
 header {
-    padding: 24px;
+    padding: 24px 24px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -83,49 +83,115 @@ header {
     color: var(--red);
 }
 
-/* Task List */
+/* ── Overall Progress ── */
+.overall-progress-wrap {
+    margin: 0 20px 12px;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.overall-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.overall-progress-info span:first-child {
+    font-size: 13px;
+    color: var(--text-grey);
+    font-weight: 600;
+}
+
+#overall-progress-pct {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--toss-blue);
+}
+
+.overall-progress-bar-bg {
+    height: 8px;
+    background: var(--toss-grey-bg);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.overall-progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease, background 0.4s ease;
+    background: var(--toss-blue);
+}
+
+/* ── Task List ── */
 .task-list {
     padding: 0 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .task-card {
     background-color: var(--white);
-    padding: 0; /* 내부 패딩은 자식 요소가 가짐 */
-    border-radius: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-radius: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     overflow: hidden;
 }
 
+.task-main {
+    display: flex;
+    align-items: stretch;
+}
+
 .task-content {
     flex: 1;
-    padding: 20px;
+    padding: 16px 16px 14px;
     cursor: pointer;
 }
 
-.task-info h3 {
-    font-size: 18px;
+.task-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.task-top-row h3 {
+    font-size: 17px;
     font-weight: 700;
-    margin-bottom: 4px;
+    color: var(--text-black);
 }
 
-.task-info p {
-    font-size: 14px;
+.task-workbook {
+    font-size: 13px;
     color: var(--text-grey);
+    margin-bottom: 10px;
 }
 
+/* 진도 바 */
+.task-progress-bar-bg {
+    height: 5px;
+    background: var(--toss-grey-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.task-progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.35s ease;
+}
+
+/* 체크 영역 */
 .task-check-area {
-    padding: 20px;
+    padding: 0 16px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-left: 1px solid #f2f4f6;
+    border-left: 1px solid var(--toss-grey-bg);
 }
 
 .check-circle {
@@ -136,6 +202,7 @@ header {
     background-color: var(--white);
     transition: all 0.2s ease;
     position: relative;
+    flex-shrink: 0;
 }
 
 .check-circle.checked {
@@ -146,7 +213,7 @@ header {
 .check-circle.checked::after {
     content: '✔';
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -161,14 +228,38 @@ header {
 .check-circle.partial::after {
     content: '✔';
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-/* Animations */
+/* ── 편집 모드 버튼 ── */
+.task-edit-btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 10px;
+    border-left: 1px solid var(--toss-grey-bg);
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.edit-btn:active {
+    background: var(--toss-grey-bg);
+}
+
+/* ── Animations ── */
 @keyframes shake-card {
     0% { transform: rotate(0deg); }
     25% { transform: rotate(1deg); }
@@ -192,22 +283,6 @@ header {
     position: relative;
 }
 
-.task-card.shaking::after {
-    content: '−';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    width: 24px;
-    height: 24px;
-    background-color: var(--toss-light-grey);
-    color: var(--text-grey);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-}
-
 .task-card.falling {
     animation: fall-down 1s forwards ease-in;
 }
@@ -217,11 +292,11 @@ header {
     100% { transform: scale(1); }
 }
 
-/* FAB */
+/* ── FAB ── */
 .fab-btn {
     position: fixed;
     bottom: 30px;
-    right: calc(50% - 220px); /* 중앙 정렬 보정 */
+    right: calc(50% - 220px);
     width: 60px;
     height: 60px;
     border-radius: 30px;
@@ -240,7 +315,7 @@ header {
     }
 }
 
-/* Modal Common */
+/* ── Modal Common ── */
 .modal {
     position: fixed;
     top: 0;
@@ -251,7 +326,7 @@ header {
     z-index: 100;
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* Bottom sheet default */
+    align-items: flex-end;
     opacity: 1;
     transition: opacity 0.3s;
 }
@@ -278,6 +353,11 @@ header {
     animation: fadeIn 0.3s ease-out;
 }
 
+.modal-content.calendar-popup {
+    max-width: 380px;
+    padding: 24px 20px;
+}
+
 @keyframes slideUp {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
@@ -288,7 +368,7 @@ header {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* Inputs & Buttons */
+/* ── Inputs & Buttons ── */
 .input-label {
     display: block;
     font-size: 14px;
@@ -314,7 +394,7 @@ header {
 }
 
 .toss-input:focus {
-    background-color: #e8f3ff; /* Light blue focus */
+    background-color: #e8f3ff;
 }
 
 .chip-container {
@@ -357,6 +437,17 @@ header {
     cursor: pointer;
 }
 
+.btn-secondary {
+    padding: 18px;
+    background-color: var(--toss-grey-bg);
+    color: var(--toss-grey-text);
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 .btn-text {
     width: 100%;
     padding: 16px;
@@ -368,7 +459,11 @@ header {
     cursor: pointer;
 }
 
-/* Progress Modal Specific */
+.flex-1 {
+    flex: 1;
+}
+
+/* ── Progress Modal ── */
 .progress-input-wrapper {
     display: flex;
     align-items: center;
@@ -394,7 +489,7 @@ header {
     font-weight: 600;
 }
 
-/* Report Specific */
+/* ── Report ── */
 .icon-area {
     font-size: 60px;
     margin-bottom: 16px;
@@ -414,6 +509,7 @@ header {
     display: flex;
     justify-content: space-between;
     font-weight: 600;
+    align-items: center;
 }
 
 .coin-text {
@@ -427,7 +523,157 @@ header {
     margin-bottom: 10px;
 }
 
-/* Side Menu */
+.chip.chip-add {
+    border-style: dashed;
+    color: var(--toss-blue);
+    border-color: var(--toss-blue);
+    background: white;
+    font-weight: 600;
+}
+
+.chip.chip-custom {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.chip-del {
+    font-size: 15px;
+    color: inherit;
+    opacity: 0.6;
+    line-height: 1;
+    pointer-events: auto;
+}
+
+.chip.selected .chip-del {
+    color: white;
+    opacity: 0.8;
+}
+
+.custom-subject-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.custom-subject-wrap.hidden {
+    display: none;
+}
+
+.custom-subject-wrap .toss-input {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 15px;
+}
+
+.btn-chip-confirm {
+    padding: 12px 18px;
+    background: var(--toss-blue);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Calendar ── */
+.cal-nav-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-grey);
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+.cal-nav-btn:active { background: var(--toss-grey-bg); }
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 6px;
+}
+.cal-weekdays span {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-grey);
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-black);
+    cursor: default;
+    position: relative;
+}
+
+.cal-cell.empty {
+    background: none;
+}
+
+.cal-cell.cal-today {
+    border: 2px solid var(--toss-blue);
+    font-weight: 700;
+}
+
+.cal-cell.cal-100 {
+    background: var(--green);
+    color: white;
+}
+
+.cal-cell.cal-partial {
+    background: var(--orange);
+    color: white;
+}
+
+.cal-cell.cal-zero {
+    background: var(--toss-light-grey);
+    color: var(--text-grey);
+}
+
+.cal-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-grey);
+}
+
+.cal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot-100 { background: var(--green); }
+.dot-partial { background: var(--orange); }
+.dot-zero { background: var(--toss-light-grey); }
+
+/* ── Side Menu ── */
 .side-menu {
     position: fixed;
     top: 0;
